@@ -1,0 +1,32 @@
+Tue Apr 13 10:36:55 PDT 2021
+
+ - support CVFEM, EBVC, FEM
+ - promote simple elements to higher order
+
+high level CVFEM:
+ - a hybrid method
+ - in-between FEM (underlying basis that can be promoted) & FVM (conservative since flux leaving one face matches the one entering the other)
+ 
+sliding and overset meshing available
+
+NALU ABSTRACTIONS:-------------------------------------------------------------
+
+1. A time integrator wrapping non-linear coupling between different physics sets (realms = physics equations + BCs), all of which are coupled using operator-split (or even monolithic, which methods. 
+
+Consider CHT: we have a continuity, momentum and energy equation in the fluids zone, and a diffusion equation in the solid. We could solve this fully coupled (monolithic). In segregated systems, you have two separate systems (fluid and thermal) + interfaces (continuity of flux at these), and iterate to repair the coupling.
+
+2. Input file:
+
+linear_solvers: -> Trilinos-based pre-conditioning and sparse solvers
+transfers: -> multi-physics/zone coupling
+
+YAML: creates a database of the options from the IP file, and Nalu "pulls" from the database.
+
+3. Divergence:
+
+(i) NaNs in the linear or non-linear solver, typically.
+
+Typical causes: bad ICs, large timestep, bad stabilization (central operators w/o upwinding), poor time integration (II order timestep + adaptive ts?).
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
